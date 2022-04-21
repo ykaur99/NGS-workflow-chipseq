@@ -139,23 +139,6 @@ def get_merged_spikeIn_input(wildcards):
 def get_final_output():
 	final_output = []
 
-	# coverage bigwigs for individual replicates
-	final_output.extend(expand(
-					[
-						"results/bigwigs/coverage/individual/{sample}.bw"
-					],
-					sample = units["sample_name"]
-				)
-			)
-
-	# coverage bigwigs for merged replicates
-	final_output.extend(expand(
-					[
-						"results/bigwigs/coverage/merged/{sample}.bw"
-					],
-					sample = units["sample_group"]
-				)
-			)
 	
 		# z-score normalized bigwigs for individual replicates
 	final_output.extend(expand(
