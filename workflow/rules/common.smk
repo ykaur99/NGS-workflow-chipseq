@@ -185,7 +185,7 @@ def get_final_output():
 		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "narrow") & (units["read_format"] == "SE")]
 		final_output.extend(expand(
 				[
-					"results/narrow_peaks/se/{sample}{ext}"
+					"results/peaks/individual/{sample}{ext}"
 				],
 				sample = out_samples["sample_name"],
 				ext = ["_peaks.xls", "_peaks.narrowPeak","_summits.bed"]
@@ -196,7 +196,7 @@ def get_final_output():
 		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "narrow") & (units["read_format"] == "PE")]
 		final_output.extend(expand(
 				[
-					"results/narrow_peaks/pe/{sample}{ext}"
+					"results/peaks/individual/{sample}{ext}"
 				],
 				sample = out_samples["sample_name"],
 				ext = ["_peaks.xls", "_peaks.narrowPeak","_summits.bed"]
@@ -207,7 +207,7 @@ def get_final_output():
 		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "broad") & (units["read_format"] == "SE")]
 		final_output.extend(expand(
 				[
-					"results/broad_peaks/se/{sample}{ext}"
+					"results/peaks/individual/{sample}{ext}"
 				],
 				sample = out_samples["sample_name"],
 				ext = ["_peaks.xls", "_peaks.broadPeak","_peaks.gappedPeak"]
@@ -218,7 +218,7 @@ def get_final_output():
 		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "broad") & (units["read_format"] == "PE")]
 		final_output.extend(expand(
 				[
-					"results/broad_peaks/pe/{sample}{ext}"
+					"results/peaks/individual/{sample}{ext}"
 				],
 				sample = out_samples["sample_name"],
 				ext = ["_peaks.xls", "_peaks.broadPeak","_peaks.gappedPeak"]
