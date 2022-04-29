@@ -76,46 +76,67 @@ def get_bam_merge(wildcards):
 	return expand(
 		"results/aligned_reads/filtered/{group}.bam", group=group)
 
+def macs2_read_format(wildcards):
+		unit = units.loc[wildcards.sample]
+		if all(unit["call_peaks"]):
+			if all(pd.isna(unit["input"])):
+				if all(unit["read_format"] == "SE"):
+					return "-f BAM"
+				elif all(unit["read_format"] == "PE"):
+					return "-f BAMPE"
 
-def get_macs2_input_narrow_se(wildcards):
+def get_macs2_input_narrow(wildcards):
 	unit = units.loc[wildcards.sample]
 	if all(unit["call_peaks"]):
-		if all(unit["read_format"] == "SE"):
-			if all(unit["peak_type"] == "narrow"):
-				if all(pd.isna(unit["input"])):
-					return {"treatment": "results/aligned_reads/filtered/{sample}.bam"}
-				else:
-					return {"treatment": "results/aligned_reads/filtered/{sample}.bam", "control": "results/aligned_reads/filtered/{input}.bam".format(input=unit.iloc[0].input)}
+		if all(unit["peak_type"] == "narrow"):
+			if all(pd.isna(unit["input"])):
+				return {"treatment": "results/aligned_reads/filtered/{sample}.bam"}
+			else:
+				return {"treatment": "results/aligned_reads/filtered/{sample}.bam", "control": "results/aligned_reads/filtered/{input}.bam".format(input=unit.iloc[0].input)}
 
-def get_macs2_input_broad_se(wildcards):
+def get_macs2_input_broad(wildcards):
 	unit = units.loc[wildcards.sample]
 	if all(unit["call_peaks"]):
-		if all(unit["read_format"] == "SE"):
-			if all(unit["peak_type"] == "broad"):
-				if all(pd.isna(unit["input"])):
-					return {"treatment": "results/aligned_reads/filtered/{sample}.bam"}
-				else:
-					return {"treatment": "results/aligned_reads/filtered/{sample}.bam", "control": "results/aligned_reads/filtered/{input}.bam".format(input=unit.iloc[0].input)}
+		if all(unit["peak_type"] == "broad"):
+			if all(pd.isna(unit["input"])):
+				return {"treatment": "results/aligned_reads/filtered/{sample}.bam"}
+			else:
+				return {"treatment": "results/aligned_reads/filtered/{sample}.bam", "control": "results/aligned_reads/filtered/{input}.bam".format(input=unit.iloc[0].input)}
 
-def get_macs2_input_narrow_pe(wildcards):
-	unit = units.loc[wildcards.sample]
+def get_macs2_input_narrow_merged(wildcards):
+	unit =  units[units["sample_group"] == wildcards.sample_group]
 	if all(unit["call_peaks"]):
-		if all(unit["read_format"] == "PE"):
-			if all(unit["peak_type"] == "narrow"):
-				if all(pd.isna(unit["input"])):
-					return {"treatment": "results/aligned_reads/filtered/{sample}.bam"}
-				else:
-					return {"treatment": "results/aligned_reads/filtered/{sample}.bam", "control": "results/aligned_reads/filtered/{input}.bam".format(input=unit.iloc[0].input)}
+		if all(unit["peak_type"] == "narrow"):
+			if all(pd.isna(unit["input"])):
+				sample_names = pd.unique(unit["sample_name"])
+				if len(sample_names) > 1:
+					return {"treatment": expand("results/aligned_reads/filtered/{sample}.bam",sample=sample_names)}
+			else:
+				sample_names = pd.unique(unit["sample_name"])
+				input_names = pd.unique(units.loc[unit["input"]]["sample_name"])
+				if len(sample_names) > 1:
+					return {"treatment": expand("results/aligned_reads/filtered/{sample}.bam",sample=sample_names), "control": expand("results/aligned_reads/filtered/{input}.bam",input=input_names)}
 
-def get_macs2_input_broad_pe(wildcards):
-	unit = units.loc[wildcards.sample]
+def get_macs2_input_broad_merged(wildcards):
+	unit =  units[units["sample_group"] == wildcards.sample_group]
 	if all(unit["call_peaks"]):
-		if all(unit["read_format"] == "PE"):
-			if all(unit["peak_type"] == "broad"):
-				if all(pd.isna(unit["input"])):
-					return {"treatment": "results/aligned_reads/filtered/{sample}.bam"}
-				else:
-					return {"treatment": "results/aligned_reads/filtered/{sample}.bam", "control": "results/aligned_reads/filtered/{input}.bam".format(input=unit.iloc[0].input)}
+		if all(unit["peak_type"] == "broad"):
+			if all(pd.isna(unit["input"])):
+				sample_names = pd.unique(unit["sample_name"])
+				if len(sample_names) > 1:
+					return {"treatment": expand("results/aligned_reads/filtered/{sample}.bam",sample=sample_names)}
+			else:
+				sample_names = pd.unique(unit["sample_name"])
+				input_names = pd.unique(units.loc[unit["input"]]["sample_name"])
+				if len(sample_names) > 1:
+					return {"treatment": expand("results/aligned_reads/filtered/{sample}.bam",sample=sample_names), "control": expand("results/aligned_reads/filtered/{input}.bam",sample=input_names)}
+
+def get_replicate_peaks(wildcards):
+	unit =  units[units["sample_group"] == wildcards.sample_group]
+	group = pd.unique(unit["sample_name"])
+	return expand(
+		"results/peaks/individual/{peak_type}/{group}_peaks.{peak_type}Peak", group=group, peak_type=wildcards.peak_type)
+	
 
 
 def get_scaling_input(wildcards):
@@ -181,48 +202,87 @@ def get_final_output():
 
 
 	# add narrow peak output
-	if any( (units["call_peaks"]) & (units["peak_type"] == "narrow") & (units["read_format"] == "SE")):
-		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "narrow") & (units["read_format"] == "SE")]
+	if any( (units["call_peaks"]) & (units["peak_type"] == "narrow")):
+		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "narrow")]
 		final_output.extend(expand(
 				[
-					"results/peaks/individual/{sample}{ext}"
+					"results/peaks/individual/narrow/{sample}{ext}"
 				],
 				sample = out_samples["sample_name"],
 				ext = ["_peaks.xls", "_peaks.narrowPeak","_summits.bed"]
 			)
 		)
-
-	if any( (units["call_peaks"]) & (units["peak_type"] == "narrow") & (units["read_format"] == "PE")):
-		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "narrow") & (units["read_format"] == "PE")]
-		final_output.extend(expand(
-				[
-					"results/peaks/individual/{sample}{ext}"
-				],
-				sample = out_samples["sample_name"],
-				ext = ["_peaks.xls", "_peaks.narrowPeak","_summits.bed"]
+	
+	if any( (units["call_peaks"]) & (units["peak_type"] == "narrow")):
+		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "narrow")]
+		replicate_summary = out_samples.groupby('sample_group').count()
+		samples_w_replicates = replicate_summary[replicate_summary['sample_name'] > 1]
+		if samples_w_replicates.shape[0] > 0:
+			out_sample_groups = samples_w_replicates.index.values.tolist()
+			final_output.extend(expand(
+					[
+						"results/peaks/merged/narrow/{sample}{ext}"
+					],
+					sample = out_sample_groups,
+					ext = ["_peaks.xls", "_peaks.narrowPeak","_summits.bed"]
+				)
 			)
-		)
-
-	if any( (units["call_peaks"]) & (units["peak_type"] == "broad") & (units["read_format"] == "SE")):
-		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "broad") & (units["read_format"] == "SE")]
+	
+	# add broad peak output
+	if any( (units["call_peaks"]) & (units["peak_type"] == "broad")):
+		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "broad")]
 		final_output.extend(expand(
 				[
-					"results/peaks/individual/{sample}{ext}"
+					"results/peaks/individual/broad/{sample}{ext}"
 				],
 				sample = out_samples["sample_name"],
 				ext = ["_peaks.xls", "_peaks.broadPeak","_peaks.gappedPeak"]
 			)
 		)
 
-	if any( (units["call_peaks"]) & (units["peak_type"] == "broad") & (units["read_format"] == "PE")):
-		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "broad") & (units["read_format"] == "PE")]
-		final_output.extend(expand(
-				[
-					"results/peaks/individual/{sample}{ext}"
-				],
-				sample = out_samples["sample_name"],
-				ext = ["_peaks.xls", "_peaks.broadPeak","_peaks.gappedPeak"]
+	if any( (units["call_peaks"]) & (units["peak_type"] == "broad")):
+		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "broad")]
+		replicate_summary = out_samples.groupby('sample_group').count()
+		samples_w_replicates = replicate_summary[replicate_summary['sample_name'] > 1]
+		if samples_w_replicates.shape[0] > 0:
+			out_sample_groups = samples_w_replicates.index.values.tolist()
+			final_output.extend(expand(
+					[
+						"results/peaks/merged/broad/{sample}{ext}"
+					],
+					sample = out_sample_groups,
+					ext = ["_peaks.xls", "_peaks.narrowPeak","_summits.bed"]
+				)
 			)
-		)
+	
+	# add filtered peak output
+	if any( (units["call_peaks"]) & (units["peak_type"] == "narrow")):
+		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "narrow")]
+		replicate_summary = out_samples.groupby('sample_group').count()
+		samples_w_replicates = replicate_summary[replicate_summary['sample_name'] > 1]
+		if samples_w_replicates.shape[0] > 0:
+			out_sample_groups = samples_w_replicates.index.values.tolist()
+			final_output.extend(expand(
+					[
+						"results/peaks/filtered/{sample}.narrowPeak"
+					],
+					sample = out_sample_groups
+				)
+			)
+	
+	if any( (units["call_peaks"]) & (units["peak_type"] == "broad")):
+		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "broad")]
+		replicate_summary = out_samples.groupby('sample_group').count()
+		samples_w_replicates = replicate_summary[replicate_summary['sample_name'] > 1]
+		if samples_w_replicates.shape[0] > 0:
+			out_sample_groups = samples_w_replicates.index.values.tolist()
+			final_output.extend(expand(
+					[
+						"results/peaks/filtered/{sample}.broadPeak"
+					],
+					sample = out_sample_groups
+				)
+			)
 
+	
 	return final_output
