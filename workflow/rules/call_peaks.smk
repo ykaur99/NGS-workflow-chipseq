@@ -48,7 +48,7 @@ rule macs2_call_peaks_narrow_merged:
 		"logs/macs2/callpeak_narrow_{sample_group}.log"
 	params: 
 		config["params"]["macs2_call_peaks_narrow"],
-		macs2_read_format
+		macs2_read_format_merged
 	wrapper:
 		"v1.1.0/bio/macs2/callpeak"
 
@@ -66,7 +66,7 @@ rule macs2_call_peaks_broad_merged:
 		"logs/macs2/callpeak_broad_{sample_group}.log"
 	params: 
 		config["params"]["macs2_call_peaks_broad"],
-		macs2_read_format
+		macs2_read_format_merged
 	wrapper:
 		"v1.1.0/bio/macs2/callpeak"
 

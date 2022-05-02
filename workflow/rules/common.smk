@@ -79,11 +79,19 @@ def get_bam_merge(wildcards):
 def macs2_read_format(wildcards):
 		unit = units.loc[wildcards.sample]
 		if all(unit["call_peaks"]):
-			if all(pd.isna(unit["input"])):
-				if all(unit["read_format"] == "SE"):
-					return "-f BAM"
-				elif all(unit["read_format"] == "PE"):
-					return "-f BAMPE"
+			if all(unit["read_format"] == "SE"):
+				return "-f BAM"
+			elif all(unit["read_format"] == "PE"):
+				return "-f BAMPE"
+
+def macs2_read_format_merged(wildcards):
+		unit =  units[units["sample_group"] == wildcards.sample_group]
+		if all(unit["call_peaks"]):
+			if all(unit["read_format"] == "SE"):
+				return "-f BAM"
+			elif all(unit["read_format"] == "PE"):
+				return "-f BAMPE"
+
 
 def get_macs2_input_narrow(wildcards):
 	unit = units.loc[wildcards.sample]

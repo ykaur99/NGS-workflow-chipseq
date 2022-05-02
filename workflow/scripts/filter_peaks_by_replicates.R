@@ -127,4 +127,4 @@ output <- merged_peak_file %>%
   rtracklayer::import() %>% 
   subsetByOverlaps(filtered_peaks)
   
-export(output, snakemake@output)
+rtracklayer::export(output, snakemake@output)
