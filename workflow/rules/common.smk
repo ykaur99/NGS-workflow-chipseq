@@ -117,13 +117,11 @@ def get_macs2_input_narrow_merged(wildcards):
 		if all(unit["peak_type"] == "narrow"):
 			if all(pd.isna(unit["input"])):
 				sample_names = pd.unique(unit["sample_name"])
-				if len(sample_names) > 1:
-					return {"treatment": expand("results/aligned_reads/filtered/{sample}.bam",sample=sample_names)}
+				return {"treatment": expand("results/aligned_reads/filtered/{sample}.bam",sample=sample_names)}
 			else:
 				sample_names = pd.unique(unit["sample_name"])
 				input_names = pd.unique(units.loc[unit["input"]]["sample_name"])
-				if len(sample_names) > 1:
-					return {"treatment": expand("results/aligned_reads/filtered/{sample}.bam",sample=sample_names), "control": expand("results/aligned_reads/filtered/{input}.bam",input=input_names)}
+				return {"treatment": expand("results/aligned_reads/filtered/{sample}.bam",sample=sample_names), "control": expand("results/aligned_reads/filtered/{input}.bam",input=input_names)}
 
 def get_macs2_input_broad_merged(wildcards):
 	unit =  units[units["sample_group"] == wildcards.sample_group]
@@ -131,13 +129,11 @@ def get_macs2_input_broad_merged(wildcards):
 		if all(unit["peak_type"] == "broad"):
 			if all(pd.isna(unit["input"])):
 				sample_names = pd.unique(unit["sample_name"])
-				if len(sample_names) > 1:
-					return {"treatment": expand("results/aligned_reads/filtered/{sample}.bam",sample=sample_names)}
+				return {"treatment": expand("results/aligned_reads/filtered/{sample}.bam",sample=sample_names)}
 			else:
 				sample_names = pd.unique(unit["sample_name"])
 				input_names = pd.unique(units.loc[unit["input"]]["sample_name"])
-				if len(sample_names) > 1:
-					return {"treatment": expand("results/aligned_reads/filtered/{sample}.bam",sample=sample_names), "control": expand("results/aligned_reads/filtered/{input}.bam",sample=input_names)}
+				return {"treatment": expand("results/aligned_reads/filtered/{sample}.bam",sample=sample_names), "control": expand("results/aligned_reads/filtered/{input}.bam",input=input_names)}
 
 def get_replicate_peaks(wildcards):
 	unit =  units[units["sample_group"] == wildcards.sample_group]
@@ -224,7 +220,7 @@ def get_final_output():
 	if any( (units["call_peaks"]) & (units["peak_type"] == "narrow")):
 		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "narrow")]
 		replicate_summary = out_samples.groupby('sample_group').count()
-		samples_w_replicates = replicate_summary[replicate_summary['sample_name'] > 1]
+		samples_w_replicates = replicate_summary
 		if samples_w_replicates.shape[0] > 0:
 			out_sample_groups = samples_w_replicates.index.values.tolist()
 			final_output.extend(expand(
@@ -251,7 +247,7 @@ def get_final_output():
 	if any( (units["call_peaks"]) & (units["peak_type"] == "broad")):
 		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "broad")]
 		replicate_summary = out_samples.groupby('sample_group').count()
-		samples_w_replicates = replicate_summary[replicate_summary['sample_name'] > 1]
+		samples_w_replicates = replicate_summary
 		if samples_w_replicates.shape[0] > 0:
 			out_sample_groups = samples_w_replicates.index.values.tolist()
 			final_output.extend(expand(
@@ -259,7 +255,7 @@ def get_final_output():
 						"results/peaks/merged/broad/{sample}{ext}"
 					],
 					sample = out_sample_groups,
-					ext = ["_peaks.xls", "_peaks.narrowPeak","_summits.bed"]
+					ext = ["_peaks.xls", "_peaks.broadPeak","_peaks.gappedPeak"]
 				)
 			)
 	
@@ -267,7 +263,7 @@ def get_final_output():
 	if any( (units["call_peaks"]) & (units["peak_type"] == "narrow")):
 		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "narrow")]
 		replicate_summary = out_samples.groupby('sample_group').count()
-		samples_w_replicates = replicate_summary[replicate_summary['sample_name'] > 1]
+		samples_w_replicates = replicate_summary
 		if samples_w_replicates.shape[0] > 0:
 			out_sample_groups = samples_w_replicates.index.values.tolist()
 			final_output.extend(expand(
@@ -281,7 +277,7 @@ def get_final_output():
 	if any( (units["call_peaks"]) & (units["peak_type"] == "broad")):
 		out_samples =  units[(units["call_peaks"]) & (units["peak_type"] == "broad")]
 		replicate_summary = out_samples.groupby('sample_group').count()
-		samples_w_replicates = replicate_summary[replicate_summary['sample_name'] > 1]
+		samples_w_replicates = replicate_summary
 		if samples_w_replicates.shape[0] > 0:
 			out_sample_groups = samples_w_replicates.index.values.tolist()
 			final_output.extend(expand(
