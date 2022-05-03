@@ -125,6 +125,9 @@ filtered_peaks <- overlap_table %>%
 # export filtered peaks to file  -----------------------------------------------
 output <- merged_peak_file %>% 
   rtracklayer::import() %>% 
-  subsetByOverlaps(filtered_peaks)
-  
-rtracklayer::export(output, snakemake@output)
+  subsetByOverlaps(filtered_peaks) %>% 
+  as.data.frame() %>% 
+  select(1:3, 6:7, 5, 8:11) %>% 
+  mutate(strand = ".")
+
+write_tsv(output, snakemake@output[[1]], col_names = FALSE)
