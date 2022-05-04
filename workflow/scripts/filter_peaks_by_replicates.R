@@ -123,9 +123,9 @@ filtered_peaks <- overlap_table %>%
   makeGRangesFromDataFrame()
 
 # export filtered peaks to file  -----------------------------------------------
-if (length(mcols(filtered_peaks)) == 11) {
+if (length(mcols(filtered_peaks)) == 6) {
   keep_cols <- c(1:3, 6:7, 5, 8:11)
-} else if (length(mcols(filtered_peaks)) == 10) {
+} else if (length(mcols(filtered_peaks)) == 5) {
   keep_cols <- c(1:3, 6:7, 5, 8:10)
 } else {
   stop("peaks do not appear to be in narrowPeak or broadPeak format. Verify file format.")
