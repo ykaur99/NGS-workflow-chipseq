@@ -123,11 +123,19 @@ filtered_peaks <- overlap_table %>%
   makeGRangesFromDataFrame()
 
 # export filtered peaks to file  -----------------------------------------------
+if (ncol(filtered_peaks) == 11) {
+  keep_cols <- c(1:3, 6:7, 5, 8:11)
+} else if (ncol(filtered_peaks) == 10) {
+  keep_cols <- c(1:3, 6:7, 5, 8:10)
+} else {
+  stop("peaks do not appear to be in narrowPeak or broadPeak format. Verify file format.")
+}
+
 output <- merged_peak_file %>% 
   rtracklayer::import() %>% 
   subsetByOverlaps(filtered_peaks) %>% 
   as.data.frame() %>% 
-  select(1:3, 6:7, 5, 8:11) %>% 
+  select(keep_cols) %>% 
   mutate(strand = ".")
 
 write_tsv(output, snakemake@output[[1]], col_names = FALSE)
