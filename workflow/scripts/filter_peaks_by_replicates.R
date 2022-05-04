@@ -135,7 +135,7 @@ output <- merged_peak_file %>%
   rtracklayer::import() %>% 
   subsetByOverlaps(filtered_peaks) %>% 
   as.data.frame() %>% 
-  select(keep_cols) %>% 
+  select(all_of(keep_cols)) %>% 
   mutate(strand = ".")
 
 write_tsv(output, snakemake@output[[1]], col_names = FALSE)
