@@ -123,12 +123,12 @@ filtered_peaks <- overlap_table %>%
   makeGRangesFromDataFrame()
 
 # export filtered peaks to file  -----------------------------------------------
-if (length(mcols(filtered_peaks)) == 6) {
+if (snakemake@wildcards[["peak_type"]] == "narrow") {
   keep_cols <- c(1:3, 6:7, 5, 8:11)
-} else if (length(mcols(filtered_peaks)) == 5) {
+} else if (snakemake@wildcards[["peak_type"]] == "broad") {
   keep_cols <- c(1:3, 6:7, 5, 8:10)
 } else {
-  stop("peaks do not appear to be in narrowPeak or broadPeak format. Verify file format.")
+  stop("Peak format should be 'narrow' or 'broad'. Check input file format")
 }
 
 output <- merged_peak_file %>% 
