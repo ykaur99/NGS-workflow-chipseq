@@ -32,7 +32,7 @@ if config["use_spikeIn"]:
 			ref="resources/ref_genome.fasta.gz",
 			spikeIn="resources/spikeIn_genome.fasta.gz",
 		output:
-			temp("resources/genome.fasta.gz"),
+			"resources/genome.fasta.gz",
 		log:
 			"logs/combine_genomes.log",
 		conda:
@@ -49,7 +49,7 @@ else:
 			input:
 				"resources/ref_genome.fasta.gz",
 			output:
-				temp("resources/genome.fasta.gz"),
+				"resources/genome.fasta.gz",
 			log:
 				"logs/rename_genome.log",
 			cache: True
