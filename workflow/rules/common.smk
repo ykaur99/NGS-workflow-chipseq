@@ -64,7 +64,7 @@ def get_bowtie2_input(wildcards):
 		fastqs = units.loc[wildcards.sample, ["fq1", "fq2"]].squeeze().dropna()
 		if len(fastqs) == 2:
 			return [fastqs.fq1, fastqs.fq2]
-		return fastqs.fq1
+		return [fastqs.fq1]
 	unit = units.loc[wildcards.sample]
 	if all(unit["read_format"] == "SE"):
 		return ["data/merged/{sample}_single.fastq.gz"]
