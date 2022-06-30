@@ -61,7 +61,7 @@ def get_bowtie2_input(wildcards):
 				return expand("data/sra/se/{accession}.fastq.gz", accession=accession)
 			else:
 				return expand("data/sra/pe/{accession}_{read}.fastq.gz", accession=accession, read=[1,2])
-		fastqs = units.loc[wildcards.sample, ["fq1", "fq2"]].reset_index(drop=True).dropna()
+		fastqs = units.loc[wildcards.sample, ["fq1", "fq2"]].squeeze().dropna()
 		if len(fastqs) == 2:
 			return [fastqs.fq1, fastqs.fq2]
 		return fastqs.fq1
