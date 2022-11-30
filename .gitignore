@@ -1,4 +1,5 @@
 *
+.DS_Store
 !workflow
 !workflow/scripts
 !workflow/scripts/*
