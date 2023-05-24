@@ -1,7 +1,7 @@
 # Introduction
 
 This repository contains a Snakemake workflow for performing a basic ChIP-seq analysis pipeline.
-This workflow was adapted from [this](https://github.com/snakemake-workflows/chipseq) workflow for ChIP-seq data and modified to suit the my analysis workflow.
+This workflow was adapted from [this](https://github.com/snakemake-workflows/chipseq) workflow for ChIP-seq data and modified to suit my preffered analysis workflow.
 
 This workflow performs the following steps:
 
@@ -245,3 +245,5 @@ In the future, I hope to add some of the following features:
 -   Create an HTML summary file containing read alignment and filtering statistics, number of peaks called, and other useful information about the workflow.
 
 -   The optional step to take unaligned reads, BLAST them, and provide a summary of which organisms the unaligned reads likely originated from.
+
+-   Add validation to ensure that unit table and config file are formatted correctly.
