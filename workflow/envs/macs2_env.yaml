@@ -6,7 +6,6 @@ dependencies:
   - python=3.10
   - macs2>=2.2.9.1
   - numpy=1.26.4
-  - cython>=0.29.36
   - pip: 
     - "macs2 --no-binary=:all:" 
   
