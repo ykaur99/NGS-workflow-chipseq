@@ -5,7 +5,5 @@ channels:
 dependencies:
   - python=3.10
   - macs2=2.2.7.1
-  - numpy=1.26.4
-  - pip: 
-    - "macs2 --no-binary=:all:" 
+  - numpy=1.26.4 
   
